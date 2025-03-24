@@ -3,42 +3,21 @@ from scipy.linalg import expm
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
-
+from torch_geometric.nn import global_mean_pool
 
 # 4. 量子 GCN 网络模型更新
 class QuantumGCNLayer(nn.Module):
     def __init__(self, in_features, out_features):
         super(QuantumGCNLayer, self).__init__()
-        print(in_features, out_features)
+        # print(in_features, out_features)
         self.fc = nn.Linear(in_features, out_features)
 
-    def unitary_dilation_operator(self,A,t=1):    # 与GCN 信息交换相同的操作  A和t是根据输入的时间来计算的
-        G_t = expm(-1j * A * t)  # 获取演化矩阵
-        N = A.shape[0]
-        I_n = np.eye(N)  # NxN 单位矩阵
-        G_dagger = G_t.conj().T  # G(t) 的共轭转置
-        # print(np.dot(G_t, G_dagger))
-        eigenvalues = np.linalg.eigvals(np.dot(G_t, G_dagger))
-
-        sqrt_max_eigenvalue = np.sqrt(np.max(eigenvalues))  # 获取最大特征值
-
-        Left_top = G_t / sqrt_max_eigenvalue
-        Right_low = -G_t / sqrt_max_eigenvalue
-
-        Right_top = np.sqrt(I_n - np.dot(G_t / sqrt_max_eigenvalue, G_dagger / sqrt_max_eigenvalue))
-        Left_low = Right_top
-
-        U = np.block([[Left_top, Right_top],  # 上半部分
-                      [Left_low, Right_low]])  # 下半部分
-        return U[:N, :N]  # 演化 U
-    def forward(self, x,A,t=1):
+    def forward(self, x,U_):
 
         #QGCNlayer
-
-        x = torch.tensor(x, dtype=torch.float32)
-        G_t = torch.tensor(self.unitary_dilation_operator(A,t), dtype=torch.float32)   #每一个节点都需要得到邻接矩阵实现GCN的消息传递的功能
-        x = torch.matmul(G_t, x)  # 确保形状匹配
+        # print(x.device)
+        x = torch.tensor(x, dtype=torch.float32).clone().detach()
+        x = torch.matmul(U_, x)  # 确保形状匹配
         x = self.fc(x)
         return x
 
@@ -47,11 +26,16 @@ class QuantumGCN(nn.Module):
         super(QuantumGCN, self).__init__()
         self.qconv1 = QuantumGCNLayer(in_features, 4)
         self.qconv2 = QuantumGCNLayer(4, out_features)
-    def forward(self, x,A):
-        x = torch.tensor(x, dtype=torch.float32)
-        x = self.qconv1(x,A)
-        x = self.qconv2(x, A)
-        return torch.relu(x)
+    def forward(self, data):
+
+        x = data[0]
+        U_ = data[1]
+        x = torch.tensor(x, dtype=torch.float32).clone().detach()
+        x = self.qconv1(x,U_)
+        x = self.qconv2(x, U_)
+        x = F.log_softmax(x, dim=1)
+        x = global_mean_pool(x, data[2])  # 图池化
+        return x
 
 
 

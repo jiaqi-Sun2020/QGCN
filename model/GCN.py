@@ -11,7 +11,6 @@ class GCN_layer(torch.nn.Module):
 
     def forward(self, data):
         x, edge_index ,batch = data.x, data.edge_index,data.batch
-
         x = self.conv1(x, edge_index)
         x = F.relu(x)
         x = F.dropout(x, training=self.training)
