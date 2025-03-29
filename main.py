@@ -15,3 +15,14 @@ def main(config_path = "./params.json"):
 
 if __name__ == '__main__':
     main(config_path = r"./config.json",)
+
+
+"""
+#=================================
+QGCN loss :33.30
+GCN loss :33.20
+#=================================c
+"""
+
+
+

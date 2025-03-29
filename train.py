@@ -25,8 +25,10 @@ def train(args):
     print("INFO dataset.num_node_features:{}".format(dataset.num_node_features))
     loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    # model = GCN_layer(in_features=dataset.num_node_features, out_features=dataset.num_classes).to(device)
-    model = QuantumGCN(in_features=dataset.num_node_features, out_features=dataset.num_classes).to(device)
+    if args.model_type == "GCN":
+        model = GCN_layer(in_features=dataset.num_node_features, out_features=dataset.num_classes).to(device)
+    elif args.model_type == "QuantumGCN":
+        model = QuantumGCN(in_features=dataset.num_node_features, out_features=dataset.num_classes).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
     # 训练循环
@@ -39,6 +41,7 @@ def train(args):
             if args.model_type == "QuantumGCN":
                 data = proprocess_QGCN(batch,device)
             if args.model_type == "GCN":
+                # print("choose GCN")
                 data = batch.to(device)
 
             optimizer.zero_grad()
@@ -54,15 +57,18 @@ def train(args):
             correct = 0
             total = 0
             with torch.no_grad():
-                save_checkpoint(model, optimizer, epoch, file_path='./runs')
+                save_checkpoint(model, optimizer, epoch, file_path=args.save_path)
                 for batch in loader:
                     if args.model_type == "QuantumGCN":
                         data = proprocess_QGCN(batch, device)
-                    if args.model_type == "GCN":
+                    elif args.model_type == "GCN":
                         data = batch.to(device)
                     optimizer.zero_grad()
                     out = model(data)
-                    pred = out.argmax(dim=1).cpu()
+                    if args.model_type == "QuantumGCN":
+                        pred = out.argmax(dim=1).cpu()
+                    elif args.model_type == "GCN":
+                        pred = out.argmax(dim=1)
                     correct += (pred == batch.y).sum().item()
                     total += batch.y.size(0)
                 acc = correct / total

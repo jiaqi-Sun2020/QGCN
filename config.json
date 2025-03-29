@@ -2,9 +2,10 @@
     "dataset_root": "./dataset",
     "dataset_name": "ENZYMES",
     "batch_size": 32,
-    "model_type": "QuantumGCN",
+    "model_type": "GCN",
     "lr": 0.01,
     "weight_decay": 0.0005,
-    "num_epochs": 100,
-    "save_freq": 20
+    "num_epochs": 1000,
+    "save_freq": 20,
+     "save_path": "./runs/GCN"
 }
