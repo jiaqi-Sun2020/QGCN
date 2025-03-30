@@ -37,12 +37,6 @@ This is a quantum walk Graph Neural Network project
 - **Manufacturer**: ASUSTeK  
 - **Chipset**: Intel Z790  
 
-### Monitor
-- **Model**: ASUS XG27UCS  
-- **Resolution**: 3840×2160  
-- **Refresh Rate**: 60Hz  
-- **Screen Size**: 27.2 inches  
-
 ### Memory
 - **Total Capacity**: 32GB  
 - **Frequency**: 4800MHz  
