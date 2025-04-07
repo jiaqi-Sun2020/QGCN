@@ -1,8 +1,8 @@
 {
-    "dataset_root": "./dataset",
-    "dataset_name": "ENZYMES",
+    "dataset_root": "./dataset/PROTEINS_SMALL",
+    "dataset_name": "PROTEINS_SMALL",
     "batch_size": 32,
-    "model_type": "GCN",
+    "model_type": "QuantumGCN",
     "lr": 0.01,
     "weight_decay": 0.0005,
     "num_epochs": 1000,

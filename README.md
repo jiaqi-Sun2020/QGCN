@@ -12,8 +12,28 @@ This is a quantum walk Graph Neural Network project
 - **reason:** Because the power operation of qubits does not match the number of nodes
 - **Workaround:** Split the unitary matrix to adapt to the adjacency matrix
 
+## 📁 Directory Structure
+```
+QGCN/
+├── runs/         # Model checkpoints
+│   └── model_name
+├── dataset/              # Data directory
+│   ├── dataname/         # data
+│   └── dataset_build.py  # build dataset
+├── environment.yml       # Environment configuration
+├── main.py               # Main entry point
+├── model/                # Model architectures
+│   ├── GCN.py
+|   └── QGCN.py
+├── config.json           # Configuration file
+├── test.py               # Testing script
+├── train.py              # Training script
+└── utils/                # Utility functions
+    ├── config.py         # Configuration utils
+    ├── proprocess.py  
+    └── save.py 
+```
 
----
 ## 🛠 Prerequisites  
 ### Python environment
   requirements.txt

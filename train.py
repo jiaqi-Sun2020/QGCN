@@ -12,6 +12,7 @@ import torch.nn.functional as F
 from utils.config import *
 from utils.proprocess import proprocess_QGCN
 from utils.save import save_checkpoint
+from dataset.dataset_build import *
 import time
 
 
@@ -20,15 +21,16 @@ import time
 def train(args):
 
 
-    dataset = TUDataset(root='./dataset', name='ENZYMES')
-    print("INFO dataset.num_classes:{}".format(dataset.num_classes))
-    print("INFO dataset.num_node_features:{}".format(dataset.num_node_features))
-    loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True)
+    # dataset = TUDataset(root='./dataset', name='ENZYMES')
+    small_dataset = build_small_protein_dataset(root=args.dataset_root)
+    print("INFO dataset.num_classes:{}".format(small_dataset.num_classes))
+    print("INFO dataset.num_node_features:{}".format(small_dataset.num_node_features))
+    loader = DataLoader(small_dataset, batch_size=args.batch_size, shuffle=True)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     if args.model_type == "GCN":
-        model = GCN_layer(in_features=dataset.num_node_features, out_features=dataset.num_classes).to(device)
+        model = GCN_layer(in_features=small_dataset.num_node_features, out_features=small_dataset.num_classes).to(device)
     elif args.model_type == "QuantumGCN":
-        model = QuantumGCN(in_features=dataset.num_node_features, out_features=dataset.num_classes).to(device)
+        model = QuantumGCN(in_features=small_dataset.num_node_features, out_features=small_dataset.num_classes).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
     # 训练循环
