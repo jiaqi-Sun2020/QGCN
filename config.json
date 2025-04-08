@@ -2,10 +2,11 @@
     "dataset_root": "./dataset/PROTEINS_SMALL",
     "dataset_name": "PROTEINS_SMALL",
     "batch_size": 32,
-    "model_type": "QuantumGCN",
+    "model": "GCN",
+    "checkpoint_path": "D:\\AI\\Quantum\\quantum\\project\\runs\\GCN\\2025-04-08_16-37-40.pth",
     "lr": 0.01,
     "weight_decay": 0.0005,
     "num_epochs": 1000,
     "save_freq": 20,
-     "save_path": "./runs/GCN"
+    "save_path": "./runs/GCN"
 }
